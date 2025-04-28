@@ -1,11 +1,15 @@
 const std = @import("std");
-const stdout = @import("std").io.getStdOut().writer();
-const soccnf = @import("config.zig");
+const SocketConfig = @import("config.zig");
+const http = @import("http.zig");
 
 pub fn main() !void {
-    const socket = try soccnf.Socket.init([4]u8{ 0, 0, 0, 0 }, 8080);
+    const stdout = @import("std").io.getStdOut().writer();
+    const socket = try SocketConfig.Socket.init([4]u8{ 0, 0, 0, 0 }, 8080);
 
     try stdout.print("Server address --> {any}\n", .{socket._address});
+
+    const req = http.HttpRequest.init("GET /index.html");
+    try stdout.print("Parsed request --> method: {s}, url: {s}\n", .{ req._method, req._url });
 
     var server = try socket._address.listen(.{});
 

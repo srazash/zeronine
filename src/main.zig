@@ -4,12 +4,12 @@ const http = @import("http.zig");
 
 pub fn main() !void {
     const stdout = @import("std").io.getStdOut().writer();
-    const socket = try SocketConfig.Socket.init([4]u8{ 0, 0, 0, 0 }, 8080);
+    const socket = try SocketConfig.Socket.init([_]u8{ 0, 0, 0, 0 }, 8080);
 
     try stdout.print("Server address --> {any}\n", .{socket._address});
 
-    const req = http.HttpRequest.init("GET /index.html");
-    try stdout.print("Parsed request --> method: {s}, url: {s}\n", .{ req._method, req._url });
+    const req = try http.HttpRequest.init("GET /index.html");
+    try stdout.print("Parsed request --> method: {?}, url: {s}\n", .{ req._method, req._url });
 
     var server = try socket._address.listen(.{});
 

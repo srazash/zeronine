@@ -8,7 +8,7 @@ pub fn main() !void {
 
     const socket = try SocketConf.Socket.init([_]u8{ 0, 0, 0, 0 }, 80);
 
-    var buffer: [100]u8 = undefined;
+    var buffer: [256]u8 = undefined;
     var req: http.HttpRequest = undefined;
 
     try stdout.print("Enter request >> ", .{});
@@ -23,5 +23,11 @@ pub fn main() !void {
     var server = try socket._address.listen(.{});
 
     const connection = try server.accept();
-    _ = connection;
+    //_ = connection;
+
+    var conn_buffer: [1024]u8 = undefined;
+    for (0..conn_buffer.len) |i| conn_buffer[i] = 0;
+
+    _ = try http.HttpRequest.readConnection(connection, &conn_buffer);
+    try stdout.print("Request from connection --> {s}\n", .{conn_buffer});
 }

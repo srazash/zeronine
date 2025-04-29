@@ -1,4 +1,5 @@
 const std = @import("std");
+const Connection = std.net.Server.Connection;
 
 pub const HttpMethod = enum {
     GET, // http/0.9 only has the GET method!
@@ -18,6 +19,11 @@ pub const HttpRequest = struct {
             ._method = try parseRequestMethod(request),
             ._url = try parseRequestUrl(request),
         };
+    }
+
+    pub fn readConnection(conn: Connection, buffer: []u8) !void {
+        const reader = conn.stream.reader();
+        _ = try reader.read(buffer);
     }
 
     fn parseRequestMethod(request_string: []const u8) !HttpMethod {

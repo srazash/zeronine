@@ -16,7 +16,7 @@ pub const HttpRequest = struct {
     pub fn init(request: []const u8) !HttpRequest {
         return HttpRequest{
             ._method = try parseRequestMethod(request),
-            ._url = parseRequestUrl(request),
+            ._url = try parseRequestUrl(request),
         };
     }
 
@@ -29,17 +29,23 @@ pub const HttpRequest = struct {
         return try httpMethodFromString(request_string[0..split]);
     }
 
-    fn parseRequestUrl(request_string: []const u8) []const u8 {
+    fn parseRequestUrl(request_string: []const u8) ![]const u8 {
         var split: u8 = 0;
         for (request_string) |c| {
             split += 1;
             if (c == ' ') break;
         }
-        return request_string[split..];
+        const url = request_string[split..];
+        try urlValidator(url);
+        return url;
     }
 
     fn httpMethodFromString(method: []const u8) !HttpMethod {
         if (std.mem.eql(u8, method, "GET")) return HttpMethod.GET;
         return HttpError.InvalidMethod;
+    }
+
+    fn urlValidator(url: []const u8) !void {
+        if (url[0] != '/') return HttpError.InvalidUrl;
     }
 };

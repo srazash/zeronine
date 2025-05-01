@@ -21,37 +21,22 @@ pub const HttpRequest = struct {
         const reader = conn.stream.reader();
         _ = try reader.read(&buffer);
 
+        std.debug.print("request --> {s}\n", .{buffer});
+
         var i: u8 = 0;
         var tokens: [25][]const u8 = undefined;
         var iter = std.mem.splitAny(u8, &buffer, " ");
         while (iter.next()) |token| : (i += 1) {
+            std.debug.print("token {d} --> {s}\n", .{ i, token });
             tokens[i] = token;
         }
 
+        std.debug.print("tokens[0] --> {s}, tokens[1] --> {s}\n", .{ tokens[0], tokens[1] });
+
         return HttpRequest{
-            ._method = try parseRequestMethod(tokens[0]),
-            ._url = try parseRequestUrl(tokens[1]),
+            ._method = try httpMethodFromString(tokens[0]),
+            ._url = try urlValidator(tokens[1]),
         };
-    }
-
-    fn parseRequestMethod(request_string: []const u8) !HttpMethod {
-        var split: u8 = 0;
-        for (request_string) |c| {
-            if (c == ' ') break;
-            split += 1;
-        }
-        return try httpMethodFromString(request_string[0..split]);
-    }
-
-    fn parseRequestUrl(request_string: []const u8) ![]const u8 {
-        var split: u8 = 0;
-        for (request_string) |c| {
-            split += 1;
-            if (c == ' ') break;
-        }
-        const url = request_string[split..];
-        try urlValidator(url);
-        return url;
     }
 
     fn httpMethodFromString(method: []const u8) !HttpMethod {
@@ -59,7 +44,7 @@ pub const HttpRequest = struct {
         return HttpError.InvalidMethod;
     }
 
-    fn urlValidator(url: []const u8) !void {
-        if (url[0] != '/') return HttpError.InvalidUrl;
+    fn urlValidator(url: []const u8) ![]const u8 {
+        return if (url[0] != '/') HttpError.InvalidUrl else url;
     }
 };

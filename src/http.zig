@@ -14,16 +14,24 @@ pub const HttpRequest = struct {
     _method: HttpMethod,
     _url: []const u8,
 
-    pub fn init(request: []const u8) !HttpRequest {
-        return HttpRequest{
-            ._method = try parseRequestMethod(request),
-            ._url = try parseRequestUrl(request),
-        };
-    }
+    pub fn init(conn: Connection) !HttpRequest {
+        var buffer: [1024]u8 = undefined;
+        for (0..buffer.len) |i| buffer[i] = 0;
 
-    pub fn readConnection(conn: Connection, buffer: []u8) !void {
         const reader = conn.stream.reader();
-        _ = try reader.read(buffer);
+        _ = try reader.read(&buffer);
+
+        var i: u8 = 0;
+        var tokens: [25][]const u8 = undefined;
+        var iter = std.mem.splitAny(u8, &buffer, " ");
+        while (iter.next()) |token| : (i += 1) {
+            tokens[i] = token;
+        }
+
+        return HttpRequest{
+            ._method = try parseRequestMethod(tokens[0]),
+            ._url = try parseRequestUrl(tokens[1]),
+        };
     }
 
     fn parseRequestMethod(request_string: []const u8) !HttpMethod {

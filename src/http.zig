@@ -25,7 +25,7 @@ pub const HttpRequest = struct {
 
         var i: u8 = 0;
         var tokens: [25][]const u8 = undefined;
-        var iter = std.mem.splitAny(u8, &buffer, " ");
+        var iter = std.mem.splitAny(u8, &buffer, " \n");
         while (iter.next()) |token| : (i += 1) {
             std.debug.print("token {d} --> {s}\n", .{ i, token });
             tokens[i] = token;

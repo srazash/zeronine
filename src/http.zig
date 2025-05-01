@@ -21,7 +21,7 @@ pub const HttpRequest = struct {
         const reader = conn.stream.reader();
         _ = try reader.read(&buffer);
 
-        std.debug.print("request --> {s}\n", .{buffer});
+        std.debug.print("request -->\n{s}\n", .{buffer});
 
         var i: u8 = 0;
         var tokens: [25][]const u8 = undefined;
@@ -30,6 +30,7 @@ pub const HttpRequest = struct {
             std.debug.print("token {d} --> {s}\n", .{ i, token });
             tokens[i] = token;
         }
+        std.debug.print("\n", .{});
 
         std.debug.print("tokens[0] --> {s}, tokens[1] --> {s}\n", .{ tokens[0], tokens[1] });
 

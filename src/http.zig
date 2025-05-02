@@ -12,7 +12,7 @@ pub const HttpError = error{
 
 pub const HttpRequest = struct {
     _method: HttpMethod,
-    _url: []const u8,
+    _path: []const u8,
 
     pub fn init(conn: Connection) !HttpRequest {
         var buffer: [1024]u8 = undefined;
@@ -21,22 +21,20 @@ pub const HttpRequest = struct {
         const reader = conn.stream.reader();
         _ = try reader.read(&buffer);
 
-        std.debug.print("request -->\n{s}\n", .{buffer});
-
         var i: u8 = 0;
-        var tokens: [25][]const u8 = undefined;
+        var tokens: [100][]const u8 = undefined;
         var iter = std.mem.splitAny(u8, &buffer, " \n");
+
+        std.debug.print("request tokenization:\n", .{});
         while (iter.next()) |token| : (i += 1) {
             std.debug.print("token {d} --> {s}\n", .{ i, token });
             tokens[i] = token;
         }
         std.debug.print("\n", .{});
 
-        std.debug.print("tokens[0] --> {s}, tokens[1] --> {s}\n", .{ tokens[0], tokens[1] });
-
         return HttpRequest{
             ._method = try httpMethodFromString(tokens[0]),
-            ._url = try urlValidator(tokens[1]),
+            ._path = try urlValidator(tokens[1]),
         };
     }
 

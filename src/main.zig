@@ -27,5 +27,5 @@ pub fn main() !void {
 
     req = try http.HttpRequest.init(connection);
     //try stdout.print("Request from connection --> {s}\n", .{conn_buffer});
-    try stdout.print("Request --> method: {?}, url: {s}\n", .{ req._method, req._url });
+    try stdout.print("http/0.9-ified request --> method: {?}, path: {s}\n", .{ req._method, req._path });
 }

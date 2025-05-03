@@ -46,4 +46,15 @@ pub const HttpRequest = struct {
     fn urlValidator(url: []const u8) ![]const u8 {
         return if (url[0] != '/') HttpError.InvalidUrl else url;
     }
+
+    pub fn fileExists(path: []const u8) !bool {
+        const root_dir = try std.fs.cwd().openDir("htroot", .{});
+        std.debug.print("{any}\n", .{root_dir});
+        var result = true;
+        root_dir.access(path, .{}) catch |e| switch (e) {
+            error.FileNotFound => result = false,
+            else => result = true,
+        };
+        return result;
+    }
 };

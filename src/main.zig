@@ -28,4 +28,5 @@ pub fn main() !void {
     req = try http.HttpRequest.init(connection);
     //try stdout.print("Request from connection --> {s}\n", .{conn_buffer});
     try stdout.print("http/0.9-ified request --> method: {?}, path: {s}\n", .{ req._method, req._path });
+    try stdout.print("file check --> {any}\n", .{http.HttpRequest.fileExists(req._path)});
 }

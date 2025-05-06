@@ -44,6 +44,7 @@ pub const HttpRequest = struct {
     }
 
     fn urlValidator(url: []const u8) ![]const u8 {
+        if (url.len == 0) return "/";
         return if (url[0] != '/') HttpError.InvalidUrl else url;
     }
 

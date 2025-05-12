@@ -50,12 +50,18 @@ pub const HttpRequest = struct {
 
     pub fn fileExists(path: []const u8) !bool {
         const root_dir = try std.fs.cwd().openDir("htroot", .{});
-        std.debug.print("{any}\n", .{root_dir});
-        var result = true;
-        root_dir.access(path, .{}) catch |e| switch (e) {
-            error.FileNotFound => result = false,
+
+        const normalised_path: []const u8 = if (std.mem.eql(u8, path, "/")) "/index.html" else path;
+        var result: bool = false;
+
+        _ = root_dir.openFile(normalised_path, .{}) catch |e| switch (e) {
+            std.posix.OpenError.FileNotFound => result = false,
             else => result = true,
         };
+
+        const file = try root_dir.openFile(normalised_path, .{});
+        defer file.close();
+
         return result;
     }
 };

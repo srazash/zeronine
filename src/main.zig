@@ -20,7 +20,7 @@ pub fn main() !void {
 
     // try stdout.print("Parsed request --> method: {?}, url: {s}\n", .{ req._method, req._url });
 
-    try stdout.print("{s}", .{app.app_logo});
+    try stdout.print("{s}\nversion: {s}\n", .{ app.logo, app.version });
 
     try stdout.print("Server address --> {any}\n", .{socket._address});
 

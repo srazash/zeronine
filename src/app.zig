@@ -1,4 +1,4 @@
-pub const app_logo =
+pub const logo =
     \\                                                  ##\                     
     \\                                                  \__|                    
     \\########\  ######\   ######\   ######\  #######\  ##\ #######\   ######\  
@@ -9,7 +9,6 @@ pub const app_logo =
     \\\________| \_______|\__|       \______/ \__|  \__|\__|\__|  \__| \_______|
     \\t h e  s i n g l e  t h r e a d e d  h t t p / 0 . 9  w e b  s e r v e r !
     \\
-    \\
 ;
 
-pub const app_version = "0.0.1";
+pub const version = "0.0.1";

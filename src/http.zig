@@ -10,6 +10,12 @@ pub const HttpError = error{
     InvalidUrl,
 };
 
+pub const response =
+    \\<TITLE>zeronine</TITLE>
+    \\<H1>Welcome to zeronine!</H1>
+    \\<P>This is a test of the WorldWideWeb system running on zeronined.</P>
+;
+
 pub const HttpRequest = struct {
     _method: HttpMethod,
     _path: []const u8,
@@ -63,5 +69,9 @@ pub const HttpRequest = struct {
         defer file.close();
 
         return result;
+    }
+
+    pub fn sendResponse(conn: Connection) !void {
+        _ = try conn.stream.write(response);
     }
 };

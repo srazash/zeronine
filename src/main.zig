@@ -33,4 +33,7 @@ pub fn main() !void {
     //try stdout.print("Request from connection --> {s}\n", .{conn_buffer});
     try stdout.print("http/0.9-ified request --> method: {?}, path: {s}\n", .{ req._method, req._path });
     //try stdout.print("file check --> {any}\n", .{Http.HttpRequest.fileExists(req._path)});
+
+    try Http.HttpRequest.sendResponse(connection);
+    try stdout.print("sending html response --> {s}\n", .{Http.response});
 }

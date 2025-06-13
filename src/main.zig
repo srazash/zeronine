@@ -26,14 +26,18 @@ pub fn main() !void {
 
     var server = try socket._address.listen(.{});
 
-    const connection = try server.accept();
-    //_ = connection;
+    while (true) {
+        const connection = try server.accept();
+        //_ = connection;
 
-    req = try Http.HttpRequest.init(connection);
-    //try stdout.print("Request from connection --> {s}\n", .{conn_buffer});
-    try stdout.print("http/0.9-ified request --> method: {?}, path: {s}\n", .{ req._method, req._path });
-    //try stdout.print("file check --> {any}\n", .{Http.HttpRequest.fileExists(req._path)});
+        req = try Http.HttpRequest.init(connection);
+        //try stdout.print("Request from connection --> {s}\n", .{conn_buffer});
+        try stdout.print("http/0.9-ified request --> method: {?}, path: {s}\n", .{ req._method, req._path });
+        //try stdout.print("file check --> {any}\n", .{Http.HttpRequest.fileExists(req._path)});
 
-    try Http.HttpRequest.sendResponse(connection);
-    try stdout.print("sending html response --> {s}\n", .{Http.response});
+        try Http.HttpRequest.sendResponse(connection);
+        try stdout.print("sending html response --> {s}\n", .{Http.response});
+
+        connection.stream.close();
+    }
 }

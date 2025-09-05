@@ -17,16 +17,23 @@ pub fn main() !void {
     const port: u16 = 8080;
 
     var conn_buffer: [1024]u8 = undefined;
+    var readin: [1024]u8 = undefined;
 
     const address = try std.net.Address.resolveIp(ipv4, port);
     var server = try address.listen(.{ .reuse_address = true });
+    defer server.deinit();
 
     std.log.info("listening on {s}:{d}", .{ ipv4, port });
 
     while (true) {
         const conn = try server.accept();
-        _ = conn.stream.reader(&conn_buffer);
+        var reader = conn.stream.reader(&conn_buffer).file_reader;
 
-        std.log.info("buffer {s}", .{conn_buffer});
+        const end = try reader.read(&readin);
+
+        std.log.info("read->{s}", .{readin[0..end]});
+
+        conn.stream.close();
+        continue;
     }
 }

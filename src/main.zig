@@ -31,7 +31,7 @@ pub fn main() !void {
 
         const end = try reader.read(&readin);
 
-        std.log.info("read->{s}", .{readin[0..end]});
+        std.log.info("<-REQ-IN- {s}", .{readin[0..end]});
 
         conn.stream.close();
         continue;

@@ -1,1 +1,3 @@
-// http/0.9 protocol
+const std = @import("std");
+
+const Http = struct {};

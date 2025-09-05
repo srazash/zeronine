@@ -12,7 +12,21 @@ pub fn main() !void {
     std.log.info("starting zeronined v{s}", .{app.version});
     std.log.info("ctrl+c to kill zeronined", .{});
 
+    // test server code
+    const ipv4 = "0.0.0.0";
+    const port: u16 = 8080;
+
+    var conn_buffer: [1024]u8 = undefined;
+
+    const address = try std.net.Address.resolveIp(ipv4, port);
+    var server = try address.listen(.{ .reuse_address = true });
+
+    std.log.info("listening on {s}:{d}", .{ ipv4, port });
+
     while (true) {
-        // do http-y stuff
+        const conn = try server.accept();
+        _ = conn.stream.reader(&conn_buffer);
+
+        std.log.info("buffer {s}", .{conn_buffer});
     }
 }

@@ -16,7 +16,6 @@ pub fn main() !void {
     const ipv4 = "0.0.0.0";
     const port: u16 = 8080;
 
-    var conn_buffer: [1024]u8 = undefined;
     var readin: [1024]u8 = undefined;
 
     const address = try std.net.Address.resolveIp(ipv4, port);
@@ -27,11 +26,14 @@ pub fn main() !void {
 
     while (true) {
         const conn = try server.accept();
-        var reader = conn.stream.reader(&conn_buffer).file_reader;
 
-        const end = try reader.read(&readin);
+        const end = try conn.stream.read(&readin);
 
         std.log.info("<-REQ-IN- {s}", .{readin[0..end]});
+
+        try conn.stream.writeAll("RECIEVED\n");
+
+        std.log.info("-REQ-OUT-> {s}", .{"'RECIEVED'\n"});
 
         conn.stream.close();
         continue;

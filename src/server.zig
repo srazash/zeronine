@@ -26,16 +26,37 @@ pub const HttpServer = struct {
         while (true) {
             const conn = try server.accept();
 
-            _ = try conn.stream.read(&readin);
+            const eos = try conn.stream.read(&readin);
 
-            std.log.info("<-REQ-IN--", .{});
+            const req = requestCleaner(readin[0..eos]);
+
+            std.log.info("<-REQ-IN-- {s} {s}", .{ req.method, req.url });
 
             try conn.stream.writeAll("RECIEVED\n");
 
-            std.log.info("-RES-OUT->", .{});
+            std.log.info("-RES-OUT-> RECIEVED", .{});
 
             conn.stream.close();
             continue;
         }
+    }
+
+    fn requestCleaner(request: []u8) struct { method: []const u8, url: []const u8 } {
+        var itr = std.mem.tokenizeAny(u8, request, " ");
+
+        var method: []const u8 = undefined;
+        if (itr.peek() != null) {
+            method = itr.next().?;
+        }
+
+        var url: []const u8 = undefined;
+        if (itr.peek() != null) {
+            url = itr.next().?;
+        }
+
+        return .{
+            .method = method,
+            .url = url,
+        };
     }
 };
